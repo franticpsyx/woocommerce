@@ -260,9 +260,10 @@ class WC_Product_Variable extends WC_Product {
 		 * Max transient length is 45, -10 for get_transient_version.
 		 * @var string
 		 */
-		$hash         = substr( md5( json_encode( apply_filters( 'woocommerce_get_variation_prices_hash', array( $this->id, $display ? WC_Tax::get_rates() : '' ), $this, $display ) ) ), 0, 22 );
-		$cache_key    = 'wc_var_prices' . $hash . WC_Cache_Helper::get_transient_version( 'product' );
-		$prices_array = get_transient( $cache_key );
+		$variation_price_filters = apply_filters( 'woocommerce_variation_prices_transient_filters', array(), $this, $display );
+		$hash                    = substr( md5( json_encode( apply_filters( 'woocommerce_get_variation_prices_hash', array( $this->id, $display ? WC_Tax::get_rates() : '', $variation_price_filters ), $this, $display ) ) ), 0, 22 );
+		$cache_key               = 'wc_var_prices' . $hash . WC_Cache_Helper::get_transient_version( 'product' );
+		$prices_array            = get_transient( $cache_key );
 
 		if ( empty( $prices_array ) ) {
 			$prices            = array();
@@ -303,6 +304,12 @@ class WC_Product_Variable extends WC_Product {
 				'regular_price' => $regular_prices,
 				'sale_price'    => $sale_prices
 			);
+
+			if ( ! empty( $variation_price_filters ) ) {
+				foreach ( $variation_price_filters as $filter_id ) {
+					$prices_array = apply_filters( 'woocommerce_variation_prices_transient_' . $filter_id, $prices_array, $this, $display );
+				}
+			}
 
 			set_transient( $cache_key, $prices_array, DAY_IN_SECONDS * 30 );
 		}
