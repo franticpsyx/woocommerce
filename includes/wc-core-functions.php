@@ -735,7 +735,7 @@ function wc_get_image_size( $image_size ) {
 		$size['crop']   = 0;
 		$image_size     = 'single';
 	} elseif ( in_array( $image_size, array( 'thumbnail', 'shop_thumbnail', 'shop_catalog', 'woocommerce_thumbnail' ), true ) ) {
-		$size['width'] = wc_get_theme_support( 'thumbnail_image_width', get_option( 'woocommerce_thumbnail_image_width', 300 ) );
+		$size['width'] = wc_get_theme_support( 'thumbnail_image_width', get_option( 'woocommerce_thumbnail_image_width', 600 ) );
 		$cropping      = get_option( 'woocommerce_thumbnail_cropping', '1: 1' );
 
 		if ( 'uncropped' === $cropping ) {
